@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍰 甜蜜烘焙坊 - 工作管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF9A9E;
+            --primary-dark: #F093FB;
+            --secondary: #FECFEF;
+            --accent: #A8EDEA;
+            --text: #5D4E6D;
+            --text-light: #8B7B8B;
+            --bg: #FFF5F7;
+            --card-bg: #FFFFFF;
+            --border: #FFE4E8;
+            --shadow: 0 4px 20px rgba(255, 154, 158, 0.15);
+            --shadow-hover: 0 8px 30px rgba(255, 154, 158, 0.25);
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--text);
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, var(--card-bg) 0%, #FFF0F3 100%);
+            border-right: 1px solid var(--border);
+            padding: 30px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            text-align: center;
+            padding-bottom: 30px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        .logo p {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-link i {
+            font-size: 20px;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-link span {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px 25px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+
+        .header h2 {
+            font-size: 24px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-danger {
+            background: #FF6B6B;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #FF5252;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .stat-icon.pink { background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%); }
+        .stat-icon.blue { background: linear-gradient(135deg, #A8EDEA 0%, #FED6E3 100%); }
+        .stat-icon.purple { background: linear-gradient(135deg, #D299C2 0%, #FEF9D7 100%); }
+        .stat-icon.orange { background: linear-gradient(135deg, #F6D365 0%, #FDA085 100%); }
+
+        .stat-info h3 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-info p {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        /* 表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--text);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table tr:hover {
+            background: var(--bg);
+        }
+
+        .data-table td {
+            font-size: 14px;
+        }
+
+        /* 状态标签 */
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        .status-pending { background: #FFF3CD; color: #856404; }
+        .status-processing { background: #CCE5FF; color: #004085; }
+        .status-completed { background: #D4EDDA; color: #155724; }
+        .status-cancelled { background: #F8D7DA; color: #721C24; }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(255, 154, 158, 0.2);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-light);
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        /* 排班表 */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: 100px repeat(7, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .schedule-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .schedule-time {
+            background: var(--bg);
+            padding: 15px 10px;
+            text-align: center;
+            font-weight: 500;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .schedule-cell {
+            background: var(--card-bg);
+            padding: 10px;
+            min-height: 80px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-cell:hover {
+            background: var(--bg);
+        }
+
+        .schedule-cell.has-staff {
+            background: linear-gradient(135deg, #E3F2FD 0%, #F3E5F5 100%);
+        }
+
+        .schedule-staff {
+            font-size: 12px;
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* 库存预警 */
+        .alert-banner {
+            background: linear-gradient(135deg, #FFF3CD 0%, #FFE4B5 100%);
+            border: 1px solid #FFC107;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-banner i {
+            font-size: 20px;
+            color: #856404;
+        }
+
+        .alert-banner span {
+            color: #856404;
+            font-size: 14px;
+        }
+
+        /* 隐藏内容 */
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 20px 10px;
+            }
+
+            .logo h1, .logo p, .nav-link span {
+                display: none;
+            }
+
+            .nav-link {
+                justify-content: center;
+                padding: 15px;
+            }
+
+            .nav-link i {
+                margin-right: 0;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .schedule-grid {
+                grid-template-columns: 60px repeat(7, 1fr);
+                font-size: 11px;
+            }
+        }
+
+        /* 动画 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        /* 快捷操作 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-action-btn {
+            background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg) 100%);
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-action-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .quick-action-btn i {
+            font-size: 32px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .quick-action-btn span {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        /* 搜索框 */
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        /* 今日订单列表 */
+        .today-orders {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.3s ease;
+        }
+
+        .order-item:hover {
+            background: var(--bg);
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .order-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 15px;
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-info h4 {
+            font-size: 15px;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .order-info p {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .order-status {
+            margin-left: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">🍰</div>
+                <h1>甜蜜烘焙坊</h1>
+                <p>工作管理系统</p>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-section="dashboard">
+                            <i>📊</i>
+                            <span>仪表盘</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="orders">
+                            <i>📋</i>
+                            <span>订单管理</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="inventory">
+                            <i>📦</i>
+                            <span>库存管理</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="recipes">
+                            <i>🧁</i>
+                            <span>食谱/产品</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-section="schedule">
+                            <i>📅</i>
+                            <span>员工排班</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="main-content">
+            <!-- 仪表盘 -->
+            <section id="dashboard" class="content-section active">
+                <div class="header">
+                    <h2>📊 今日概览</h2>
+                    <div class="header-actions">
+                        <span id="currentDate"></span>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card animate-fade-in">
+                        <div class="stat-icon pink">📋</div>
+                        <div class="stat-info">
+                            <h3 id="todayOrders">0</h3>
+                            <p>今日订单</p>
+                        </div>
+                    </div>
+                    <div class="stat-card animate-fade-in" style="animation-delay: 0.1s">
+                        <div class="stat-icon blue">💰</div>
+                        <div class="stat-info">
+                            <h3 id="todayRevenue">¥0</h3>
+                            <p>今日收入</p>
+                        </div>
+                    </div>
+                    <div class="stat-card animate-fade-in" style="animation-delay: 0.2s">
+                        <div class="stat-icon purple">⏳</div>
+                        <div class="stat-info">
+                            <h3 id="pendingOrders">0</h3>
+                            <p>待处理订单</p>
+                        </div>
+                    </div>
+                    <div class="stat-card animate-fade-in" style="animation-delay: 0.3s">
+                        <div class="stat-icon orange">⚠️</div>
+                        <div class="stat-info">
+                            <h3 id="lowStock">0</h3>
+                            <p>库存预警</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">⚡ 快捷操作</h3>
+                    </div>
+                    <div class="quick-actions">
+                        <div class="quick-action-btn" onclick="showModal('orderModal')">
+                            <i>➕</i>
+                            <span>新增订单</span>
+                        </div>
+                        <div class="quick-action-btn" onclick="showModal('inventoryModal')">
+                            <i>📦</i>
+                            <span>入库记录</span>
+                        </div>
+                        <div class="quick-action-btn" onclick="showSection('recipes')">
+                            <i>🧁</i>
+                            <span>查看食谱</span>
+                        </div>
+                        <div class="quick-action-btn" onclick="showSection('schedule')">
+                            <i>📅</i>
+                            <span>查看排班</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">📋 今日订单</h3>
+                        <button class="btn btn-primary btn-sm" onclick="showModal('orderModal')">+ 新增订单</button>
+                    </div>
+                    <div class="today-orders" id="todayOrdersList">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- 订单管理 -->
+            <section id="orders" class="content-section">
+                <div class="header">
+                    <h2>📋 订单管理</h2>
+                    <div class="header-actions">
+                        <div class="search-box">
+                            <input type="text" id="orderSearch" placeholder="搜索订单..." onkeyup="searchOrders()">
+                            <i>🔍</i>
+                        </div>
+                        <button class="btn btn-primary" onclick="showModal('orderModal')">+ 新增订单</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>订单号</th>
+                                <th>客户姓名</th>
+                                <th>产品</th>
+                                <th>数量</th>
+                                <th>金额</th>
+                                <th>取货时间</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTable">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 库存管理 -->
+            <section id="inventory" class="content-section">
+                <div class="header">
+                    <h2>📦 库存管理</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="showModal('inventoryModal')">+ 新增原料</button>
+                    </div>
+                </div>
+
+                <div id="stockAlert" class="alert-banner" style="display: none;">
+                    <i>⚠️</i>
+                    <span>以下原料库存不足，请及时补货！</span>
+                </div>
+
+                <div class="card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>原料名称</th>
+                                <th>当前库存</th>
+                                <th>单位</th>
+                                <th>最低库存</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 食谱/产品管理 -->
+            <section id="recipes" class="content-section">
+                <div class="header">
+                    <h2>🧁 食谱/产品管理</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="showModal('recipeModal')">+ 新增产品</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>产品名称</th>
+                                <th>类别</th>
+                                <th>售价</th>
+                                <th>成本</th>
+                                <th>制作时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recipesTable">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 员工排班 -->
+            <section id="schedule" class="content-section">
+                <div class="header">
+                    <h2>📅 员工排班</h2>
+                    <div class="header-actions">
+                        <button class="btn btn-primary" onclick="showModal('scheduleModal')">+ 安排班次</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="schedule-grid" id="scheduleGrid">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 订单模态框 -->
+    <div class="modal-overlay" id="orderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📋 新增订单</h3>
+                <button class="modal-close" onclick="hideModal('orderModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="orderForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">客户姓名 *</label>
+                            <input type="text" class="form-input" id="orderCustomer" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">联系电话</label>
+                            <input type="tel" class="form-input" id="orderPhone">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">选择产品 *</label>
+                        <select class="form-select" id="orderProduct" required>
+                            <option value="">请选择产品</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">数量 *</label>
+                            <input type="number" class="form-input" id="orderQuantity" min="1" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">金额 (¥) *</label>
+                            <input type="number" class="form-input" id="orderAmount" min="0" step="0.01" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">取货日期 *</label>
+                            <input type="date" class="form-input" id="orderDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">取货时间</label>
+                            <input type="time" class="form-input" id="orderTime">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">备注</label>
+                        <textarea class="form-textarea" id="orderNote" placeholder="特殊要求、装饰说明等..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('orderModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveOrder()">保存订单</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 库存模态框 -->
+    <div class="modal-overlay" id="inventoryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📦 新增原料</h3>
+                <button class="modal-close" onclick="hideModal('inventoryModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="inventoryForm">
+                    <div class="form-group">
+                        <label class="form-label">原料名称 *</label>
+                        <input type="text" class="form-input" id="invName" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">当前库存 *</label>
+                            <input type="number" class="form-input" id="invQuantity" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">单位 *</label>
+                            <select class="form-select" id="invUnit" required>
+                                <option value="g">克 (g)</option>
+                                <option value="kg">千克 (kg)</option>
+                                <option value="ml">毫升 (ml)</option>
+                                <option value="L">升 (L)</option>
+                                <option value="个">个</option>
+                                <option value="盒">盒</option>
+                                <option value="包">包</option>
+                                <option value="瓶">瓶</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">最低库存预警 *</label>
+                        <input type="number" class="form-input" id="invMinStock" min="0" step="0.01" required>
+                        <small style="color: var(--text-light); font-size: 12px;">库存低于此数值时将显示预警</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('inventoryModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveInventory()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 产品模态框 -->
+    <div class="modal-overlay" id="recipeModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">🧁 新增产品</h3>
+                <button class="modal-close" onclick="hideModal('recipeModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="recipeForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">产品名称 *</label>
+                            <input type="text" class="form-input" id="recipeName" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">类别 *</label>
+                            <select class="form-select" id="recipeCategory" required>
+                                <option value="生日蛋糕">生日蛋糕</option>
+                                <option value="杯子蛋糕">杯子蛋糕</option>
+                                <option value="饼干">饼干</option>
+                                <option value="面包">面包</option>
+                                <option value="甜点">甜点</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">售价 (¥) *</label>
+                            <input type="number" class="form-input" id="recipePrice" min="0" step="0.01" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">成本 (¥)</label>
+                            <input type="number" class="form-input" id="recipeCost" min="0" step="0.01">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">制作时间</label>
+                        <input type="text" class="form-input" id="recipeTime" placeholder="例如：2小时">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">配方说明</label>
+                        <textarea class="form-textarea" id="recipeDesc" placeholder="原料配比、制作步骤等..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('recipeModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveRecipe()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 排班模态框 -->
+    <div class="modal-overlay" id="scheduleModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📅 安排班次</h3>
+                <button class="modal-close" onclick="hideModal('scheduleModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="scheduleForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">星期 *</label>
+                            <select class="form-select" id="scheduleDay" required>
+                                <option value="0">周一</option>
+                                <option value="1">周二</option>
+                                <option value="2">周三</option>
+                                <option value="3">周四</option>
+                                <option value="4">周五</option>
+                                <option value="5">周六</option>
+                                <option value="6">周日</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">时间段 *</label>
+                            <select class="form-select" id="scheduleSlot" required>
+                                <option value="0">早班 (8:00-12:00)</option>
+                                <option value="1">午班 (12:00-16:00)</option>
+                                <option value="2">晚班 (16:00-20:00)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">员工姓名 *</label>
+                        <input type="text" class="form-input" id="scheduleStaff" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="hideModal('scheduleModal')">取消</button>
+                <button class="btn btn-primary" onclick="saveSchedule()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== 数据存储 ====================
+        let data = {
+            orders: [],
+            inventory: [],
+            recipes: [],
+            schedule: []
+        };
+
+        // 从localStorage加载数据
+        function loadData() {
+            const saved = localStorage.getItem('bakeryData');
+            if (saved) {
+                data = JSON.parse(saved);
+            } else {
+                // 初始化示例数据
+                initSampleData();
+            }
+        }
+
+        // 保存数据到localStorage
+        function saveData() {
+            localStorage.setItem('bakeryData', JSON.stringify(data));
+        }
+
+        // 初始化示例数据
+        function initSampleData() {
+            data.recipes = [
+                { id: 1, name: '草莓奶油蛋糕', category: '生日蛋糕', price: 168, cost: 45, time: '3小时', desc: '6寸蛋糕，新鲜草莓+动物奶油' },
+                { id: 2, name: '巧克力慕斯', category: '甜点', price: 28, cost: 8, time: '4小时', desc: '黑巧克力+淡奶油' },
+                { id: 3, name: '抹茶卷', category: '甜点', price: 35, cost: 10, time: '2小时', desc: '宇治抹茶粉' },
+                { id: 4, name: '黄油曲奇', category: '饼干', price: 38, cost: 12, time: '1.5小时', desc: '一盒12片' }
+            ];
+
+            data.inventory = [
+                { id: 1, name: '低筋面粉', quantity: 5000, unit: 'g', minStock: 1000 },
+                { id: 2, name: '白砂糖', quantity: 2000, unit: 'g', minStock: 500 },
+                { id: 3, name: '鸡蛋', quantity: 30, unit: '个', minStock: 10 },
+                { id: 4, name: '淡奶油', quantity: 500, unit: 'ml', minStock: 200 },
+                { id: 5, name: '黄油', quantity: 400, unit: 'g', minStock: 100 },
+                { id: 6, name: '草莓', quantity: 2, unit: '盒', minStock: 1 }
+            ];
+
+            data.orders = [
+                { id: 1, customer: '张女士', phone: '138****1234', product: '草莓奶油蛋糕', quantity: 1, amount: 168, date: new Date().toISOString().split('T')[0], time: '15:00', status: 'pending', note: '写上"生日快乐"' },
+                { id: 2, customer: '李先生', phone: '139****5678', product: '巧克力慕斯', quantity: 4, amount: 112, date: new Date().toISOString().split('T')[0], time: '18:00', status: 'processing', note: '' }
+            ];
+
+            data.schedule = [
+                { day: 0, slot: 0, staff: '小王' },
+                { day: 0, slot: 1, staff: '小李' },
+                { day: 1, slot: 0, staff: '小李' },
+                { day: 2, slot: 2, staff: '小王' }
+            ];
+
+            saveData();
+        }
+
+        // ==================== 导航功能 ====================
+        function showSection(sectionId) {
+            // 隐藏所有section
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            // 显示目标section
+            document.getElementById(sectionId).classList.add('active');
+            // 更新导航状态
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+
+            // 刷新对应数据
+            if (sectionId === 'orders') renderOrders();
+            if (sectionId === 'inventory') renderInventory();
+            if (sectionId === 'recipes') renderRecipes();
+            if (sectionId === 'schedule') renderSchedule();
+        }
+
+        // 导航点击事件
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => showSection(link.dataset.section));
+        });
+
+        // ==================== 模态框功能 ====================
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            // 设置默认日期为今天
+            if (modalId === 'orderModal') {
+                document.getElementById('orderDate').value = new Date().toISOString().split('T')[0];
+                updateProductSelect();
+            }
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            // 清空表单
+            document.querySelectorAll(`#${modalId} form`).forEach(f => f.reset());
+        }
+
+        // 点击遮罩关闭
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) overlay.classList.remove('active');
+            });
+        });
+
+        // ==================== 仪表盘功能 ====================
+        function updateDashboard() {
+            const today = new Date().toISOString().split('T')[0];
+            const todayOrders = data.orders.filter(o => o.date === today);
+            const pendingOrders = data.orders.filter(o => o.status === 'pending');
+            const lowStock = data.inventory.filter(i => i.quantity <= i.minStock);
+
+            document.getElementById('todayOrders').textContent = todayOrders.length;
+            document.getElementById('todayRevenue').textContent = '¥' + todayOrders.reduce((sum, o) => sum + o.amount, 0);
+            document.getElementById('pendingOrders').textContent = pendingOrders.length;
+            document.getElementById('lowStock').textContent = lowStock.length;
+
+            // 今日订单列表
+            const ordersList = document.getElementById('todayOrdersList');
+            if (todayOrders.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📋</div>
+                        <h3>今日暂无订单</h3>
+                        <p>点击"新增订单"开始接单吧！</p>
+                    </div>
+                `;
+            } else {
+                ordersList.innerHTML = todayOrders.map(o => `
+                    <div class="order-item">
+                        <div class="order-icon">🎂</div>
+                        <div class="order-info">
+                            <h4>${o.product} x${o.quantity}</h4>
+                            <p>${o.customer} · ${o.time}取货 · ¥${o.amount}</p>
+                        </div>
+                        <div class="order-status">
+                            <span class="status-badge status-${o.status}">${getStatusText(o.status)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function getStatusText(status) {
+            const map = { pending: '待处理', processing: '制作中', completed: '已完成', cancelled: '已取消' };
+            return map[status] || status;
+        }
+
+        // ==================== 订单管理 ====================
+        function updateProductSelect() {
+            const select = document.getElementById('orderProduct');
+            select.innerHTML = '<option value="">请选择产品</option>' +
+                data.recipes.map(r => `<option value="${r.name}" data-price="${r.price}">${r.name} - ¥${r.price}</option>`).join('');
+
+            // 选择产品时自动填充价格
+            select.onchange = function() {
+                const option = this.options[this.selectedIndex];
+                if (option.dataset.price) {
+                    const qty = parseInt(document.getElementById('orderQuantity').value) || 1;
+                    document.getElementById('orderAmount').value = option.dataset.price * qty;
+                }
+            };
+
+            document.getElementById('orderQuantity').onchange = function() {
+                const select = document.getElementById('orderProduct');
+                const option = select.options[select.selectedIndex];
+                if (option.dataset.price) {
+                    document.getElementById('orderAmount').value = option.dataset.price * this.value;
+                }
+            };
+        }
+
+        function saveOrder() {
+            const order = {
+                id: Date.now(),
+                customer: document.getElementById('orderCustomer').value,
+                phone: document.getElementById('orderPhone').value,
+                product: document.getElementById('orderProduct').value,
+                quantity: parseInt(document.getElementById('orderQuantity').value),
+                amount: parseFloat(document.getElementById('orderAmount').value),
+                date: document.getElementById('orderDate').value,
+                time: document.getElementById('orderTime').value,
+                note: document.getElementById('orderNote').value,
+                status: 'pending'
+            };
+
+            if (!order.customer || !order.product || !order.amount || !order.date) {
+                alert('请填写必填项！');
+                return;
+            }
+
+            data.orders.push(order);
+            saveData();
+            hideModal('orderModal');
+            updateDashboard();
+            renderOrders();
+        }
+
+        function renderOrders() {
+            const tbody = document.getElementById('ordersTable');
+            const sorted = [...data.orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            tbody.innerHTML = sorted.map(o => `
+                <tr>
+                    <td>#${o.id.toString().slice(-6)}</td>
+                    <td>${o.customer}</td>
+                    <td>${o.product}</td>
+                    <td>${o.quantity}</td>
+                    <td>¥${o.amount}</td>
+                    <td>${o.date} ${o.time || ''}</td>
+                    <td><span class="status-badge status-${o.status}">${getStatusText(o.status)}</span></td>
+                    <td>
+                        <select class="form-select" style="width: auto; display: inline-block;" onchange="updateOrderStatus(${o.id}, this.value)">
+                            <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>待处理</option>
+                            <option value="processing" ${o.status === 'processing' ? 'selected' : ''}>制作中</option>
+                            <option value="completed" ${o.status === 'completed' ? 'selected' : ''}>已完成</option>
+                            <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>已取消</option>
+                        </select>
+                        <button class="btn btn-danger btn-sm" onclick="deleteOrder(${o.id})">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function updateOrderStatus(id, status) {
+            const order = data.orders.find(o => o.id === id);
+            if (order) {
+                order.status = status;
+                saveData();
+                updateDashboard();
+            }
+        }
+
+        function deleteOrder(id) {
+            if (confirm('确定要删除这个订单吗？')) {
+                data.orders = data.orders.filter(o => o.id !== id);
+                saveData();
+                updateDashboard();
+                renderOrders();
+            }
+        }
+
+        function searchOrders() {
+            const keyword = document.getElementById('orderSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#ordersTable tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(keyword) ? '' : 'none';
+            });
+        }
+
+        // ==================== 库存管理 ====================
+        function renderInventory() {
+            const tbody = document.getElementById('inventoryTable');
+            const lowStock = data.inventory.filter(i => i.quantity <= i.minStock);
+
+            // 显示/隐藏预警
+            document.getElementById('stockAlert').style.display = lowStock.length > 0 ? 'flex' : 'none';
+
+            tbody.innerHTML = data.inventory.map(i => {
+                const isLow = i.quantity <= i.minStock;
+                return `
+                    <tr style="${isLow ? 'background: #FFF3CD;' : ''}">
+                        <td>${i.name}</td>
+                        <td><strong>${i.quantity}</strong></td>
+                        <td>${i.unit}</td>
+                        <td>${i.minStock}</td>
+                        <td>${isLow ? '<span class="status-badge status-pending">库存不足</span>' : '<span class="status-badge status-completed">充足</span>'}</td>
+                        <td>
+                            <button class="btn btn-secondary btn-sm" onclick="editInventory(${i.id})">编辑</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteInventory(${i.id})">删除</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function saveInventory() {
+            const item = {
+                id: Date.now(),
+                name: document.getElementById('invName').value,
+                quantity: parseFloat(document.getElementById('invQuantity').value),
+                unit: document.getElementById('invUnit').value,
+                minStock: parseFloat(document.getElementById('invMinStock').value)
+            };
+
+            if (!item.name || isNaN(item.quantity) || isNaN(item.minStock)) {
+                alert('请填写完整信息！');
+                return;
+            }
+
+            data.inventory.push(item);
+            saveData();
+            hideModal('inventoryModal');
+            renderInventory();
+            updateDashboard();
+        }
+
+        function deleteInventory(id) {
+            if (confirm('确定要删除这个原料吗？')) {
+                data.inventory = data.inventory.filter(i => i.id !== id);
+                saveData();
+                renderInventory();
+                updateDashboard();
+            }
+        }
+
+        // ==================== 食谱管理 ====================
+        function renderRecipes() {
+            const tbody = document.getElementById('recipesTable');
+            tbody.innerHTML = data.recipes.map(r => `
+                <tr>
+                    <td><strong>${r.name}</strong></td>
+                    <td>${r.category}</td>
+                    <td>¥${r.price}</td>
+                    <td>¥${r.cost || '-'}</td>
+                    <td>${r.time || '-'}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="viewRecipe(${r.id})">查看</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteRecipe(${r.id})">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function saveRecipe() {
+            const recipe = {
+                id: Date.now(),
+                name: document.getElementById('recipeName').value,
+                category: document.getElementById('recipeCategory').value,
+                price: parseFloat(document.getElementById('recipePrice').value),
+                cost: parseFloat(document.getElementById('recipeCost').value) || 0,
+                time: document.getElementById('recipeTime').value,
+                desc: document.getElementById('recipeDesc').value
+            };
+
+            if (!recipe.name || !recipe.category || isNaN(recipe.price)) {
+                alert('请填写必填项！');
+                return;
+            }
+
+            data.recipes.push(recipe);
+            saveData();
+            hideModal('recipeModal');
+            renderRecipes();
+        }
+
+        function viewRecipe(id) {
+            const r = data.recipes.find(x => x.id === id);
+            if (r) {
+                alert(`🧁 ${r.name}\n\n类别：${r.category}\n售价：¥${r.price}\n成本：¥${r.cost || '-'}\n制作时间：${r.time || '-'}\n\n配方说明：\n${r.desc || '暂无说明'}`);
+            }
+        }
+
+        function deleteRecipe(id) {
+            if (confirm('确定要删除这个产品吗？')) {
+                data.recipes = data.recipes.filter(r => r.id !== id);
+                saveData();
+                renderRecipes();
+            }
+        }
+
+        // ==================== 排班管理 ====================
+        function renderSchedule() {
+            const grid = document.getElementById('scheduleGrid');
+            const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+            const times = ['早班\n8:00-12:00', '午班\n12:00-16:00', '晚班\n16:00-20:00'];
+
+            let html = '<div class="schedule-header">时间</div>';
+            days.forEach(d => html += `<div class="schedule-header">${d}</div>`);
+
+            for (let slot = 0; slot < 3; slot++) {
+                html += `<div class="schedule-time">${times[slot].replace('\n', '<br>')}</div>`;
+                for (let day = 0; day < 7; day++) {
+                    const schedule = data.schedule.find(s => s.day === day && s.slot === slot);
+                    if (schedule) {
+                        html += `<div class="schedule-cell has-staff" onclick="removeSchedule(${day}, ${slot})">
+                            <div class="schedule-staff">${schedule.staff}</div>
+                            <small style="color: #999;">点击删除</small>
+                        </div>`;
+                    } else {
+                        html += `<div class="schedule-cell" onclick="openScheduleModal(${day}, ${slot})"></div>`;
+                    }
+                }
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function openScheduleModal(day, slot) {
+            document.getElementById('scheduleDay').value = day;
+            document.getElementById('scheduleSlot').value = slot;
+            showModal('scheduleModal');
+        }
+
+        function saveSchedule() {
+            const day = parseInt(document.getElementById('scheduleDay').value);
+            const slot = parseInt(document.getElementById('scheduleSlot').value);
+            const staff = document.getElementById('scheduleStaff').value;
+
+            if (!staff) {
+                alert('请输入员工姓名！');
+                return;
+            }
+
+            // 删除已存在的
+            data.schedule = data.schedule.filter(s => !(s.day === day && s.slot === slot));
+            // 添加新的
+            data.schedule.push({ day, slot, staff });
+
+            saveData();
+            hideModal('scheduleModal');
+            renderSchedule();
+        }
+
+        function removeSchedule(day, slot) {
+            if (confirm('确定要删除这个排班吗？')) {
+                data.schedule = data.schedule.filter(s => !(s.day === day && s.slot === slot));
+                saveData();
+                renderSchedule();
+            }
+        }
+
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN', {
+                year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+            });
+            updateDashboard();
+        });
+    </script>
+</body>
+</html>
